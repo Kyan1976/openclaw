@@ -1,4 +1,4 @@
-import { mutation, query } from "convex/server";
+import { mutationGeneric as mutation, queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
 
 // Query to get all team members

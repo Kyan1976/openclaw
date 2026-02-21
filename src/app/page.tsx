@@ -1,38 +1,103 @@
 'use client';
 
-import { useQuery, useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import { useState, useEffect } from 'react';
 import { TaskCard } from './components/TaskCard';
 import { TaskForm } from './components/TaskForm';
-import { TeamMember } from './components/TeamMember';
+
+// Convex HTTP Actions 客户端
+const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL || 'https://wooden-duck-742.convex.site';
+
+async function fetchTasks() {
+  try {
+    const response = await fetch(`${CONVEX_URL}/api/getTasks`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch tasks');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    return [];
+  }
+}
+
+async function createTask(taskData: any) {
+  try {
+    const response = await fetch(`${CONVEX_URL}/api/createTask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(taskData)
+    });
+    if (!response.ok) {
+      throw new Error('Failed to create task');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating task:', error);
+    throw error;
+  }
+}
+
+async function updateTaskStatus(taskId: string, status: string, progress?: number) {
+  try {
+    const response = await fetch(`${CONVEX_URL}/api/updateTaskStatus`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId, status, progress })
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update task status');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating task status:', error);
+    throw error;
+  }
+}
 
 export default function TaskControlCenter() {
-  const tasks = useQuery(api.tasks.getAllTasks);
-  const teamMembers = useQuery(api.team.getAllTeamMembers);
-  const createTask = useMutation(api.tasks.createTask);
-  const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
-
+  const [tasks, setTasks] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [loading, setLoading] = useState(true);
 
-  // Initialize team members
   useEffect(() => {
-    if (teamMembers && teamMembers.length === 0) {
-      // Initialize AI team members
-      const aiTeam = [
-        { name: '李小明', role: '主理人/协调者', avatar: '👤' },
-        { name: '织梦', role: '家纺知识专家', avatar: '🧵' },
-        { name: '预见', role: '销售预测分析师', avatar: '📈' },
-        { name: '数流', role: 'ETL数据工程师', avatar: '📊' },
-        { name: '消费洞察', role: '消费者行为分析师', avatar: '👥' },
-        { name: '补货智控', role: '自动化补货系统', avatar: '🔄' }
-      ];
-      // This would be handled by the backend in a real app
-    }
-  }, [teamMembers]);
+    loadTasks();
+  }, []);
 
-  if (!tasks || !teamMembers) {
+  const loadTasks = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchTasks();
+      setTasks(data);
+    } catch (error) {
+      console.error('Failed to load tasks:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateTask = async (taskData: any) => {
+    try {
+      await createTask(taskData);
+      await loadTasks(); // 重新加载任务列表
+      setShowForm(false);
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      alert('创建任务失败，请重试');
+    }
+  };
+
+  const handleUpdateStatus = async ({ taskId, status, progress }: { taskId: string; status: string; progress?: number }) => {
+    try {
+      await updateTaskStatus(taskId, status, progress);
+      await loadTasks(); // 重新加载任务列表
+    } catch (error) {
+      console.error('Failed to update task status:', error);
+      alert('更新任务状态失败，请重试');
+    }
+  };
+
+  if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
@@ -122,7 +187,11 @@ export default function TaskControlCenter() {
         {/* Task List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTasks.map((task) => (
-            <TaskCard key={task._id} task={task} onUpdateStatus={updateTaskStatus} />
+            <TaskCard 
+              key={task._id} 
+              task={task} 
+              onUpdateStatus={handleUpdateStatus} 
+            />
           ))}
         </div>
 
@@ -148,12 +217,16 @@ export default function TaskControlCenter() {
                 </button>
               </div>
               <TaskForm 
-                onSubmit={(taskData) => {
-                  createTask(taskData);
-                  setShowForm(false);
-                }} 
+                onSubmit={handleCreateTask} 
                 onCancel={() => setShowForm(false)}
-                teamMembers={teamMembers}
+                teamMembers={[
+                  { name: '李小明', role: '主理人/协调者' },
+                  { name: '织梦', role: '家纺知识专家' },
+                  { name: '预见', role: '销售预测分析师' },
+                  { name: '数流', role: 'ETL数据工程师' },
+                  { name: '消费洞察', role: '消费者行为分析师' },
+                  { name: '补货智控', role: '自动化补货系统' }
+                ]}
               />
             </div>
           </div>

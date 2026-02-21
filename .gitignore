@@ -1,8 +1,91 @@
+# Dependencies
 node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+*.log
+
+# Next.js
 .next/
 out/
 build/
 dist/
-.env.local
+
+# Production
+*.tgz
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
 .env
-convex/.cache
+.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Workspace specific
+*.pyc
+__pycache__/
+*.pkl
+*.xlsx
+*.csv
+*.zip
+*.json
+*.md
+!README.md
+*.txt
+!.gitignore
+*.pdf
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Directories to ignore
+memory/
+pdf_analysis/
+pdf_data/
+pdf_texts/
+extracted_texts/
+home-textile-knowledge-graph/
+home_textile_knowledge/
+ai-team/
+chinese-search-integration/
+procurement_learning/
+skills/
+temp_mit_files/
+
+# OpenClaw specific
+.clawhub/
+openclaw-task-center-full.zip
+task-control-center.zip
+
+# Keep only project files
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.js
+!vercel.json
+!convex.json
+!tailwind.config.js
+!postcss.config.js
+!src/
+!convex/

@@ -1,5 +1,4 @@
 {
-  "team": "your-team-name",
-  "project": "task-control-center",
+  "projectId": "openclaw",
   "apiUrl": "https://api.convex.dev"
 }

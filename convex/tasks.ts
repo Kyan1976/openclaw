@@ -1,26 +1,24 @@
-import { mutation, query } from "convex/server";
+import { mutationGeneric, queryGeneric } from "convex/server";
 import { v } from "convex/values";
-import { id } from "convex/values";
-import { internal } from "./_generated/api";
 
 // Query to get all tasks
-export const getAllTasks = query({
+export const getAllTasks = queryGeneric({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("tasks").order("createdAt", "desc").collect();
+    return await ctx.db.query("tasks").collect();
   }
 });
 
 // Query to get tasks by status
-export const getTasksByStatus = query({
+export const getTasksByStatus = queryGeneric({
   args: { status: v.union(v.literal("todo"), v.literal("in_progress"), v.literal("completed"), v.literal("blocked")) },
   handler: async (ctx, args) => {
-    return await ctx.db.query("tasks").filter(q => q.eq(q.field("status"), args.status)).order("priority", "desc").collect();
+    return await ctx.db.query("tasks").filter(q => q.eq(q.field("status"), args.status)).collect();
   }
 });
 
 // Query to get tasks by assignee
-export const getTasksByAssignee = query({
+export const getTasksByAssignee = queryGeneric({
   args: { assignedTo: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db.query("tasks").filter(q => q.eq(q.field("assignedTo"), args.assignedTo)).collect();
@@ -28,7 +26,7 @@ export const getTasksByAssignee = query({
 });
 
 // Mutation to create a new task
-export const createTask = mutation({
+export const createTask = mutationGeneric({
   args: {
     title: v.string(),
     description: v.string(),
@@ -55,7 +53,7 @@ export const createTask = mutation({
 });
 
 // Mutation to update task status
-export const updateTaskStatus = mutation({
+export const updateTaskStatus = mutationGeneric({
   args: {
     taskId: v.id("tasks"),
     status: v.union(v.literal("todo"), v.literal("in_progress"), v.literal("completed"), v.literal("blocked")),
@@ -86,7 +84,7 @@ export const updateTaskStatus = mutation({
 });
 
 // Mutation to update task progress
-export const updateTaskProgress = mutation({
+export const updateTaskProgress = mutationGeneric({
   args: {
     taskId: v.id("tasks"),
     progress: v.number()

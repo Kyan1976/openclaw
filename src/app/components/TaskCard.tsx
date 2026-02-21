@@ -1,5 +1,21 @@
-import { Task } from '../../convex/schema';
 import { useState } from 'react';
+
+interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'todo' | 'in_progress' | 'completed' | 'blocked';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: string;
+  assignedTo: string;
+  createdBy: string;
+  dueDate?: number;
+  notes?: string;
+  tags: string[];
+  createdAt: number;
+  updatedAt: number;
+  progress: number;
+}
 
 interface TaskCardProps {
   task: Task;

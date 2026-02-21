@@ -1,15 +1,7 @@
-import { mutationGeneric, queryGeneric } from "convex/server";
+import { mutationGeneric } from "convex/server";
 import { v } from "convex/values";
 
-// Public query to get all tasks (no authentication required)
-export const getAllTasks = queryGeneric({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("tasks").collect();
-  }
-});
-
-// Public mutation to create a new task
+// 创建任务的Mutation
 export const createTask = mutationGeneric({
   args: {
     title: v.string(),
@@ -32,11 +24,11 @@ export const createTask = mutationGeneric({
       progress: args.status === "completed" ? 100 : 0,
       dependencies: []
     });
-    return taskId;
+    return { success: true, taskId };
   }
 });
 
-// Public mutation to update task status
+// 更新任务状态的Mutation
 export const updateTaskStatus = mutationGeneric({
   args: {
     taskId: v.id("tasks"),
@@ -63,6 +55,6 @@ export const updateTaskStatus = mutationGeneric({
     }
     
     await ctx.db.patch(args.taskId, updates);
-    return args.taskId;
+    return { success: true };
   }
 });
