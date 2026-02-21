@@ -1,0 +1,6 @@
+{
+  "rootDirectory": "task-control-center",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".next"
+}
