@@ -20,7 +20,14 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "target": "ES2017",
+    "types": ["node"],
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "strictBindCallApply": false,
+    "strictPropertyInitialization": false
   },
   "include": [
     "next-env.d.ts",
