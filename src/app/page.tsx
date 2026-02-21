@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useConvex } from 'convex/react';
+import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { Id } from '../../convex/_generated/dataModel';
 
 type Task = {
-  _id: Id<"tasks">;
+  _id: string;
   title: string;
   description: string;
   status: 'todo' | 'in_progress' | 'completed' | 'blocked';
@@ -106,10 +105,10 @@ export default function TaskControlCenter() {
     }
   };
 
-  const handleStatusChange = async (taskId: Id<"tasks">, newStatus: typeof formData.status) => {
+  const handleStatusChange = async (taskId: string, newStatus: typeof formData.status) => {
     try {
       await updateTaskStatus({
-        taskId,
+        taskId: taskId as any,
         status: newStatus,
       });
     } catch (error) {
@@ -117,9 +116,12 @@ export default function TaskControlCenter() {
     }
   };
 
-  const handleProgressChange = async (taskId: Id<"tasks">, progress: number) => {
+  const handleProgressChange = async (taskId: string, progress: number) => {
     try {
-      await updateTaskProgress({ taskId, progress });
+      await updateTaskProgress({ 
+        taskId: taskId as any, 
+        progress 
+      });
     } catch (error) {
       console.error('更新进度失败:', error);
     }
