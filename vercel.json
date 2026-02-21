@@ -1,6 +1,16 @@
 {
-  "rootDirectory": "task-control-center",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": ".next"
+  "version": 2,
+  "builds": [
+    {
+      "src": "task-control-center/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "task-control-center/$1"
+    }
+  ],
+  "rootDirectory": "task-control-center" // 额外补充，双重保障
 }
